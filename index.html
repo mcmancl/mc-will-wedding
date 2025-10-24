@@ -4,8 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="robots" content="noindex,nofollow"> <!-- prevents search indexing -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>[Couple's Names] Wedding – August 22, 2026</title>
+  <title>Mary Claire & Will – Wedding | August 22, 2026</title>
+
   <link href="https://fonts.googleapis.com/css2?family=Alice&display=swap" rel="stylesheet">
+
   <style>
     :root {
       --mulberry: #440124;
@@ -20,11 +22,59 @@
       background-color: var(--light-bg);
       color: var(--mulberry);
       line-height: 1.6;
+      scroll-behavior: smooth;
+    }
+
+    /* --- Sticky Navigation --- */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: white;
+      border-bottom: 1px solid var(--silver);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0.5rem 1rem;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: var(--mulberry);
+      font-size: 1rem;
+      padding: 0.3rem 0.6rem;
+      transition: color 0.3s, background-color 0.3s;
+      border-radius: 4px;
+    }
+
+    nav a:hover {
+      color: white;
+      background-color: var(--green);
+    }
+
+    /* --- Monogram --- */
+    .monogram {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem 1rem 1rem;
+    }
+
+    svg {
+      width: 120px;
+      height: 120px;
     }
 
     header {
       text-align: center;
-      padding: 4rem 1rem 2rem;
+      padding: 2rem 1rem 3rem;
       background: linear-gradient(to bottom right, var(--mulberry), var(--green));
       color: white;
     }
@@ -46,6 +96,7 @@
       max-width: 800px;
       margin: 0 auto;
       text-align: center;
+      animation: fadeIn 1.2s ease-out;
     }
 
     h2 {
@@ -75,6 +126,13 @@
       border: 2px solid var(--silver);
     }
 
+    iframe {
+      border: none;
+      width: 100%;
+      height: 700px;
+      border-radius: 8px;
+    }
+
     footer {
       background-color: var(--mulberry);
       color: white;
@@ -89,35 +147,58 @@
     }
 
     @media (max-width: 600px) {
-      header h1 {
-        font-size: 2rem;
-      }
-
-      section {
-        padding: 2rem 1rem;
-      }
+      header h1 { font-size: 2rem; }
+      nav a { font-size: 0.9rem; }
+      svg { width: 90px; height: 90px; }
     }
 
-    /* Optional subtle animation for elegance */
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    section, header {
-      animation: fadeIn 1.2s ease-out;
+    .note {
+      font-size: 0.9rem;
+      color: var(--green);
     }
   </style>
 </head>
 
 <body>
 
+  <!-- Navigation -->
+  <nav>
+    <ul>
+      <li><a href="#welcome">Welcome</a></li>
+      <li><a href="#details">Details</a></li>
+      <li><a href="#accommodations">Accommodations</a></li>
+      <li><a href="#photos">Photos</a></li>
+      <li><a href="#rsvp">RSVP</a></li>
+    </ul>
+  </nav>
+
+  <!-- Monogram -->
+  <div class="monogram">
+    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#c0c0c0; stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#440124; stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <circle cx="100" cy="100" r="90" fill="white" stroke="url(#grad)" stroke-width="4"/>
+      <text x="50%" y="57%" text-anchor="middle" font-family="Alice, serif" font-size="56" fill="url(#grad)">M &amp; W</text>
+    </svg>
+  </div>
+
+  <!-- Header -->
   <header>
-    <h1>[Your Names]</h1>
+    <h1>Mary Claire & Will</h1>
     <p>are getting married</p>
     <p><strong>August 22, 2026</strong> • Jan Serr Studio, Milwaukee, WI</p>
   </header>
 
+  <!-- Welcome -->
   <section id="welcome">
     <h2>Welcome</h2>
     <p>
@@ -126,6 +207,7 @@
     </p>
   </section>
 
+  <!-- Details -->
   <section id="details">
     <h2>Event Details</h2>
     <div class="details">
@@ -133,15 +215,17 @@
       <p><strong>Reception:</strong> [Time] immediately following</p>
       <p><strong>Attire:</strong> [Dress Code or Style]</p>
       <p><strong>Address:</strong> 2155 N Prospect Ave, Milwaukee, WI</p>
-      <p><a href="https://maps.google.com" target="_blank" style="color: var(--green); text-decoration:none;">View on Google Maps</a></p>
+      <p><a href="https://maps.google.com?q=Jan+Serr+Studio+Milwaukee+WI" target="_blank" style="color: var(--green); text-decoration:none;">View on Google Maps</a></p>
     </div>
   </section>
 
+  <!-- Accommodations -->
   <section id="accommodations">
     <h2>Accommodations</h2>
     <p>[Hotel block info, travel tips, or local recommendations]</p>
   </section>
 
+  <!-- Photo Gallery -->
   <section id="photos">
     <h2>Photo Gallery</h2>
     <div class="photo-gallery">
@@ -151,13 +235,26 @@
     </div>
   </section>
 
+  <!-- RSVP -->
   <section id="rsvp">
     <h2>RSVP</h2>
-    <p>[Add RSVP link or embedded form when available]</p>
+    <p>We can’t wait to celebrate with you! Please RSVP below by [RSVP Date].</p>
+
+    <!-- Replace with your real Google Form embed -->
+    <iframe 
+      src="https://docs.google.com/forms/d/e/[YOUR-FORM-ID]/viewform?embedded=true">
+    </iframe>
+
+    <p class="note">If the form doesn’t load, you can also 
+      <a href="https://docs.google.com/forms/d/e/[YOUR-FORM-ID]/viewform" target="_blank" style="color: var(--green); text-decoration:none;">
+        open it in a new tab
+      </a>.
+    </p>
   </section>
 
+  <!-- Footer -->
   <footer>
-    <p>With love, <span class="accent">[Your Names]</span></p>
+    <p>With love, <span class="accent">Mary Claire & Will</span></p>
     <p>© 2026 | Designed with ❤️ for our wedding day</p>
   </footer>
 
