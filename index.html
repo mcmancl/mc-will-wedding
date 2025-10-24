@@ -2,45 +2,49 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="robots" content="noindex,nofollow"> <!-- prevents search indexing -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mary Claire & Will – Wedding | August 22, 2026</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Alice&display=swap" rel="stylesheet">
+  <!-- Prevent search engines from indexing -->
+  <meta name="robots" content="noindex, nofollow" />
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500&family=Cormorant+Garamond:wght@400;600&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --mulberry: #440124;
-      --green: #78866b;
+      --mulberry: #3b0021;
+      --green: #52664c;
       --silver: #c0c0c0;
-      --light-bg: #f8f8f8;
+      --deep-silver: #a0a0a0;
+      --offwhite: #f9f8f7;
     }
 
     body {
       margin: 0;
-      font-family: 'Alice', serif;
-      background-color: var(--light-bg);
+      font-family: 'Montserrat', sans-serif;
+      background-color: var(--offwhite);
       color: var(--mulberry);
       line-height: 1.6;
       scroll-behavior: smooth;
     }
 
-    /* --- Sticky Navigation --- */
+    /* --- Navigation --- */
     nav {
       position: sticky;
       top: 0;
       z-index: 1000;
-      background: white;
+      background-color: rgba(255, 255, 255, 0.95);
       border-bottom: 1px solid var(--silver);
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      backdrop-filter: blur(6px);
     }
 
     nav ul {
-      list-style: none;
-      margin: 0;
-      padding: 0.5rem 1rem;
       display: flex;
       justify-content: center;
+      list-style: none;
+      padding: 0.5rem 1rem;
+      margin: 0;
       flex-wrap: wrap;
       gap: 1rem;
     }
@@ -48,9 +52,9 @@
     nav a {
       text-decoration: none;
       color: var(--mulberry);
-      font-size: 1rem;
-      padding: 0.3rem 0.6rem;
+      font-weight: 500;
       transition: color 0.3s, background-color 0.3s;
+      padding: 0.4rem 0.8rem;
       border-radius: 4px;
     }
 
@@ -72,58 +76,136 @@
       height: 120px;
     }
 
+    /* --- Header --- */
     header {
       text-align: center;
-      padding: 2rem 1rem 3rem;
+      padding: 3rem 1rem 4rem;
       background: linear-gradient(to bottom right, var(--mulberry), var(--green));
       color: white;
     }
 
     header h1 {
-      font-size: 2.5rem;
-      margin: 0;
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 3rem;
       letter-spacing: 2px;
+      margin: 0;
     }
 
     header p {
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       margin-top: 0.5rem;
-      color: #f0f0f0;
+      color: var(--silver);
     }
 
+    /* --- Sections --- */
     section {
-      padding: 3rem 1rem;
-      max-width: 800px;
+      padding: 3.5rem 1rem;
+      max-width: 900px;
       margin: 0 auto;
       text-align: center;
       animation: fadeIn 1.2s ease-out;
     }
 
     h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 2rem;
       color: var(--mulberry);
       border-bottom: 1px solid var(--silver);
       display: inline-block;
-      padding-bottom: 0.5rem;
+      padding-bottom: 0.4rem;
       margin-bottom: 2rem;
     }
 
-    .details {
+    .divider {
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(to right, var(--green), var(--mulberry));
+      margin: 2rem auto;
+      border-radius: 2px;
+    }
+
+    .details, .story {
       font-size: 1.1rem;
+      color: #2f1b25;
     }
 
-    .photo-gallery {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
-      margin-top: 2rem;
-    }
-
-    .photo-gallery img {
+    /* --- Photo Carousel --- */
+    .carousel {
+      position: relative;
       width: 100%;
-      height: 250px;
-      object-fit: cover;
-      border-radius: 8px;
+      max-width: 700px;
+      margin: 2rem auto;
+      overflow: hidden;
+      border-radius: 10px;
       border: 2px solid var(--silver);
+    }
+
+    .carousel input {
+      display: none;
+    }
+
+    .carousel-images {
+      display: flex;
+      transition: transform 0.6s ease-in-out;
+      width: 300%;
+    }
+
+    .carousel img {
+      width: 100%;
+      height: 400px;
+      object-fit: cover;
+    }
+
+    #slide1:checked ~ .carousel-images { transform: translateX(0%); }
+    #slide2:checked ~ .carousel-images { transform: translateX(-100%); }
+    #slide3:checked ~ .carousel-images { transform: translateX(-200%); }
+
+    .carousel-nav {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .carousel-nav label {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background-color: var(--deep-silver);
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    input:checked + label {
+      background-color: var(--green);
+    }
+
+    /* --- Footer --- */
+    footer {
+      background-color: var(--mulberry);
+      color: white;
+      text-align: center;
+      padding: 2.5rem 1rem;
+      margin-top: 3rem;
+      font-size: 0.9rem;
+    }
+
+    .accent {
+      color: var(--green);
+    }
+
+    /* --- Animations --- */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* --- Responsive --- */
+    @media (max-width: 600px) {
+      header h1 { font-size: 2.2rem; }
+      .carousel img { height: 250px; }
     }
 
     iframe {
@@ -133,33 +215,25 @@
       border-radius: 8px;
     }
 
-    footer {
-      background-color: var(--mulberry);
-      color: white;
-      text-align: center;
-      padding: 2rem 1rem;
-      margin-top: 3rem;
-      font-size: 0.9rem;
-    }
-
-    .accent {
-      color: var(--green);
-    }
-
-    @media (max-width: 600px) {
-      header h1 { font-size: 2rem; }
-      nav a { font-size: 0.9rem; }
-      svg { width: 90px; height: 90px; }
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
     .note {
       font-size: 0.9rem;
       color: var(--green);
+    }
+
+    .registry-links a {
+      display: inline-block;
+      margin: 0.5rem 1rem;
+      padding: 0.6rem 1rem;
+      border: 1px solid var(--green);
+      border-radius: 4px;
+      color: var(--green);
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .registry-links a:hover {
+      background-color: var(--green);
+      color: white;
     }
   </style>
 </head>
@@ -170,9 +244,11 @@
   <nav>
     <ul>
       <li><a href="#welcome">Welcome</a></li>
+      <li><a href="#story">Our Story</a></li>
       <li><a href="#details">Details</a></li>
-      <li><a href="#accommodations">Accommodations</a></li>
+      <li><a href="#party">Wedding Party</a></li>
       <li><a href="#photos">Photos</a></li>
+      <li><a href="#registry">Registry</a></li>
       <li><a href="#rsvp">RSVP</a></li>
     </ul>
   </nav>
@@ -183,11 +259,11 @@
       <defs>
         <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" style="stop-color:#c0c0c0; stop-opacity:1" />
-          <stop offset="100%" style="stop-color:#440124; stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#3b0021; stop-opacity:1" />
         </linearGradient>
       </defs>
       <circle cx="100" cy="100" r="90" fill="white" stroke="url(#grad)" stroke-width="4"/>
-      <text x="50%" y="57%" text-anchor="middle" font-family="Alice, serif" font-size="56" fill="url(#grad)">M &amp; W</text>
+      <text x="50%" y="57%" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="56" fill="url(#grad)">M &amp; W</text>
     </svg>
   </div>
 
@@ -203,8 +279,19 @@
     <h2>Welcome</h2>
     <p>
       We’re so excited to celebrate our special day with you.  
-      Please explore the site for details about the ceremony, reception, and accommodations.
+      Please explore the site for details about the ceremony, reception, and travel information.
     </p>
+    <div class="divider"></div>
+  </section>
+
+  <!-- Our Story -->
+  <section id="story">
+    <h2>Our Story</h2>
+    <div class="story">
+      <p>[Add your love story here — how you met, the proposal, and your journey together.]</p>
+      <p>“Some love stories are written in the stars — ours started in Milwaukee.”</p>
+    </div>
+    <div class="divider"></div>
   </section>
 
   <!-- Details -->
@@ -217,22 +304,51 @@
       <p><strong>Address:</strong> 2155 N Prospect Ave, Milwaukee, WI</p>
       <p><a href="https://maps.google.com?q=Jan+Serr+Studio+Milwaukee+WI" target="_blank" style="color: var(--green); text-decoration:none;">View on Google Maps</a></p>
     </div>
+    <div class="divider"></div>
   </section>
 
-  <!-- Accommodations -->
-  <section id="accommodations">
-    <h2>Accommodations</h2>
-    <p>[Hotel block info, travel tips, or local recommendations]</p>
+  <!-- Wedding Party -->
+  <section id="party">
+    <h2>Wedding Party</h2>
+    <p>[Include short bios or fun notes about your wedding party members.]</p>
+    <div class="divider"></div>
   </section>
 
-  <!-- Photo Gallery -->
+  <!-- Photo Carousel -->
   <section id="photos">
     <h2>Photo Gallery</h2>
-    <div class="photo-gallery">
-      <img src="https://via.placeholder.com/400x250?text=Photo+1" alt="Photo 1">
-      <img src="https://via.placeholder.com/400x250?text=Photo+2" alt="Photo 2">
-      <img src="https://via.placeholder.com/400x250?text=Photo+3" alt="Photo 3">
+    <div class="carousel">
+      <input type="radio" name="slides" id="slide1" checked>
+      <input type="radio" name="slides" id="slide2">
+      <input type="radio" name="slides" id="slide3">
+
+      <div class="carousel-images">
+        <img src="https://via.placeholder.com/800x400?text=Photo+1" alt="Photo 1">
+        <img src="https://via.placeholder.com/800x400?text=Photo+2" alt="Photo 2">
+        <img src="https://via.placeholder.com/800x400?text=Photo+3" alt="Photo 3">
+      </div>
+
+      <div class="carousel-nav">
+        <label for="slide1"></label>
+        <label for="slide2"></label>
+        <label for="slide3"></label>
+      </div>
     </div>
+    <div class="divider"></div>
+  </section>
+
+  <!-- Registry -->
+  <section id="registry">
+    <h2>Registry</h2>
+    <p>We’re so grateful for your love and support. Your presence means the world to us!  
+       If you’d like to honor us with a gift, you can visit our registries below.</p>
+
+    <div class="registry-links">
+      <a href="[Your-Zola-Link]" target="_blank">Zola</a>
+      <a href="[Your-Crate-and-Barrel-Link]" target="_blank">Crate & Barrel</a>
+      <a href="[Your-Amazon-Link]" target="_blank">Amazon</a>
+    </div>
+    <div class="divider"></div>
   </section>
 
   <!-- RSVP -->
@@ -245,7 +361,7 @@
       src="https://docs.google.com/forms/d/e/[YOUR-FORM-ID]/viewform?embedded=true">
     </iframe>
 
-    <p class="note">If the form doesn’t load, you can also 
+    <p class="note">If the form doesn’t load, 
       <a href="https://docs.google.com/forms/d/e/[YOUR-FORM-ID]/viewform" target="_blank" style="color: var(--green); text-decoration:none;">
         open it in a new tab
       </a>.
