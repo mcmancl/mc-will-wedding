@@ -1,84 +1,112 @@
-<!-- RSVP Section -->
+<!-- RSVP -->
 <section id="rsvp">
   <h2>RSVP</h2>
-  <p>We can’t wait to celebrate with you! Enter your name below to RSVP for your party:</p>
+  <p>We can’t wait to celebrate with you! Please enter your name below to RSVP for your party.</p>
 
-  <div style="margin: 2rem auto; max-width: 400px; text-align: left;">
-    <input 
-      type="text" 
-      id="guestNameInput" 
-      placeholder="Your Full Name" 
-      style="
-        width: 100%; 
-        padding: 0.8rem 1rem; 
-        font-family: 'Montserrat', sans-serif; 
-        font-size: 1rem; 
-        border: 1px solid var(--silver); 
-        border-radius: 6px;
-        margin-bottom: 1rem;
-      "
-    />
-    <button 
-      id="rsvpButton" 
-      style="
-        width: 100%; 
-        padding: 0.8rem 1rem; 
-        font-family: 'Montserrat', sans-serif; 
-        font-size: 1rem; 
-        color: white; 
-        background-color: var(--green); 
-        border: none; 
-        border-radius: 6px; 
-        cursor: pointer;
-        transition: background-color 0.3s;
-      "
-      onmouseover="this.style.backgroundColor='#3b5c3d'"
-      onmouseout="this.style.backgroundColor='var(--green)'"
-    >
-      RSVP
-    </button>
+  <div class="rsvp-container">
+    <input type="text" id="guest-name" placeholder="Enter your name">
+    <button id="rsvp-submit">Submit</button>
+    <p id="rsvp-error">Name not found. Please check spelling or contact us.</p>
   </div>
 </section>
+
+<style>
+  /* RSVP Section Styling */
+  #rsvp {
+    padding: 3rem 1rem;
+    text-align: center;
+  }
+
+  #rsvp h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    font-size: 2rem;
+    color: var(--mulberry);
+    border-bottom: 1px solid var(--silver);
+    display: inline-block;
+    padding-bottom: 0.4rem;
+    margin-bottom: 2rem;
+  }
+
+  .rsvp-container {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  #guest-name {
+    width: 300px;
+    max-width: 90%;
+    padding: 0.8rem 1rem;
+    border: 2px solid var(--silver);
+    border-radius: 6px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+
+  #guest-name:focus {
+    border-color: var(--green);
+    box-shadow: 0 0 8px rgba(82, 102, 76, 0.3);
+    outline: none;
+  }
+
+  #rsvp-submit {
+    background-color: var(--green);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 0.8rem 2rem;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  #rsvp-submit:hover {
+    background-color: var(--mulberry);
+  }
+
+  #rsvp-error {
+    color: red;
+    display: none;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+  }
+</style>
 
 <script>
 async function loadGuestList() {
   try {
     const response = await fetch('data/guestlist.csv');
     const csvText = await response.text();
-    const lines = csvText.trim().split('\n');
+    const rows = csvText.trim().split('\n');
 
-    const nameToParty = {};
-    const partyRSVPLinks = {};
+    // Map lowercase guest names to form URLs
+    const guestMap = {};
+    for (let i = 1; i < rows.length; i++) { // skip header
+      const [party_key, guest_name, form_url] = rows[i].split(',');
+      guestMap[guest_name.trim().toLowerCase()] = form_url.trim();
+    }
 
-    lines.slice(1).forEach(line => {
-      const [guestName, partyKey, formURL] = line.split(',');
-      if (!guestName) return;
-      const cleanName = guestName.trim().toLowerCase();
-      const cleanParty = partyKey.trim();
-      const cleanURL = formURL.trim();
+    document.getElementById('rsvp-submit').addEventListener('click', () => {
+      const inputName = document.getElementById('guest-name').value.trim().toLowerCase();
+      const url = guestMap[inputName];
+      const errorEl = document.getElementById('rsvp-error');
 
-      nameToParty[cleanName] = cleanParty;
-      partyRSVPLinks[cleanParty] = cleanURL;
+      if (url) {
+        window.location.href = url; // redirect to form
+      } else {
+        errorEl.style.display = 'block';
+      }
     });
-
-    return { nameToParty, partyRSVPLinks };
   } catch (err) {
-    console.error('Error loading guest list:', err);
-    alert('Sorry, we could not load the guest list. Please try again later.');
+    console.error('Failed to load guest list:', err);
   }
 }
 
-document.getElementById('rsvpButton').addEventListener('click', async () => {
-  const inputName = document.getElementById('guestNameInput').value.trim().toLowerCase();
-  if (!inputName) return alert('Please enter your full name.');
-
-  const { nameToParty, partyRSVPLinks } = await loadGuestList();
-  const partyKey = nameToParty[inputName];
-
-  if (partyKey && partyRSVPLinks[partyKey]) {
-    window.location.href = partyRSVPLinks[partyKey];
-  } else {
-    alert('Name not found. Please check your spelling or contact us.');
-  }
-});
+// Load guest list on page load
+loadGuestList();
 </script>
