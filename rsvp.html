@@ -1,140 +1,185 @@
-<section id="rsvp">
-  <h2>RSVP</h2>
-  <p>We can’t wait to celebrate with you! Please enter your name below to RSVP for your party.</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mary Claire & Will – RSVP</title>
 
-  <div class="rsvp-container">
-    <input type="text" id="guestNameInput" placeholder="Enter your name" />
-    <button id="rsvpButton">RSVP</button>
-    <p id="rsvpMessage"></p>
-  </div>
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500&family=Cormorant+Garamond:wght@400;600&display=swap" rel="stylesheet">
 
   <style>
-    .rsvp-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
-      max-width: 400px;
-      margin: 2rem auto;
+    :root {
+      --mulberry: #3b0021;
+      --green: #52664c;
+      --silver: #c0c0c0;
+      --offwhite: #f9f8f7;
     }
 
-    .rsvp-container input {
-      width: 100%;
-      padding: 0.8rem 1rem;
+    body {
+      margin: 0;
       font-family: 'Montserrat', sans-serif;
-      font-size: 1rem;
-      border: 2px solid var(--mulberry);
-      border-radius: 8px;
+      background-color: var(--offwhite);
+      color: var(--mulberry);
+      text-align: center;
+      padding: 3rem 1rem;
     }
 
-    .rsvp-container input:focus {
-      border-color: var(--green);
-      outline: none;
-    }
-
-    .rsvp-container button {
-      padding: 0.8rem 1.2rem;
+    h1, h2 {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 1rem;
-      color: white;
-      background-color: var(--mulberry);
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
-
-    .rsvp-container button:hover {
-      background-color: var(--green);
-    }
-
-    #rsvpMessage {
-      font-family: 'Montserrat', sans-serif;
-      font-size: 0.95rem;
       color: var(--mulberry);
     }
 
-    #rsvpMessage.error {
+    h2 {
+      font-weight: 600;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--silver);
+      display: inline-block;
+      padding-bottom: 0.3rem;
+    }
+
+    .divider {
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(to right, var(--green), var(--mulberry));
+      margin: 1.5rem auto;
+      border-radius: 2px;
+    }
+
+    #rsvp-form {
+      margin-top: 2rem;
+    }
+
+    input[type="text"] {
+      width: 80%;
+      max-width: 400px;
+      padding: 0.8rem 1rem;
+      font-size: 1rem;
+      border: 2px solid var(--green);
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    button {
+      padding: 0.8rem 1.5rem;
+      font-size: 1rem;
+      font-family: 'Montserrat', sans-serif;
+      background-color: var(--green);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: var(--mulberry);
+    }
+
+    #message {
+      margin-top: 1rem;
+      font-weight: 500;
+    }
+
+    #message.error {
       color: red;
     }
+
+    #message.success {
+      color: var(--green);
+    }
+
+    footer {
+      margin-top: 3rem;
+      font-size: 0.9rem;
+      color: var(--mulberry);
+    }
   </style>
+</head>
+<body>
+
+  <h1>RSVP</h1>
+  <h2>Mary Claire & Will</h2>
+  <div class="divider"></div>
+  <p>Enter your name to RSVP for your party:</p>
+
+  <div id="rsvp-form">
+    <input type="text" id="guest-name" placeholder="Your Full Name" />
+    <br />
+    <button id="submit-btn">RSVP</button>
+    <div id="message"></div>
+  </div>
+
+  <footer>
+    <p>With love, Mary Claire & Will</p>
+  </footer>
 
   <script>
     async function loadGuestList() {
       try {
-        console.log('Fetching guest list…');
-        const response = await fetch('data/guestlist.csv');
-        if (!response.ok) {
-          throw new Error('HTTP error ' + response.status);
-        }
+        // Cache-busting with timestamp
+        const response = await fetch(`data/guestlist.csv?v=${Date.now()}`);
         const csvText = await response.text();
-        console.log('CSV loaded:', csvText.slice(0,200), '…');
-        const rows = csvText.trim().split('\n');
-        if (rows.length < 2) {
-          console.warn('CSV has no data rows.');
-        }
+        const lines = csvText.trim().split("\n");
 
-        const partyMap = {};
-        const guestMap = {};
+        const nameToParty = {};
+        const partyRSVPLinks = {};
 
-        for (let i = 1; i < rows.length; i++) {
-          const cols = rows[i].split(',').map(c => c.trim());
-          if (cols.length < 3) {
-            console.warn('Skipping invalid row (less than 3 cols):', rows[i]);
-            continue;
-          }
-          const [partyKey, guestName, formUrl] = cols;
-          guestMap[guestName.toLowerCase()] = partyKey;
-          partyMap[partyKey] = formUrl;
-        }
+        lines.forEach((line, index) => {
+          if (index === 0) return; // skip header
+          const [partyKey, rsvpLink, ...guestNames] = line.split(",");
+          partyRSVPLinks[partyKey] = rsvpLink;
+          guestNames.forEach(name => {
+            if (name) nameToParty[name.trim().toLowerCase()] = partyKey;
+          });
+        });
 
-        console.log('Loaded guestMap keys:', Object.keys(guestMap).slice(0,20));
-        console.log('Loaded partyMap keys:', Object.keys(partyMap));
-
-        return { guestMap, partyMap };
+        return { nameToParty, partyRSVPLinks };
       } catch (err) {
-        console.error('Error loading guest list:', err);
-        const messageEl = document.getElementById('rsvpMessage');
-        messageEl.textContent = 'An error occurred while loading the guest list. Please try again later.';
-        messageEl.classList.add('error');
-        return { guestMap: {}, partyMap: {} };
+        console.error("Error loading guest list:", err);
+        document.getElementById("message").textContent = "Sorry, we can't load the guest list right now.";
+        return null;
       }
     }
 
-    document.addEventListener('DOMContentLoaded', async () => {
-      const { guestMap, partyMap } = await loadGuestList();
-      const input = document.getElementById('guestNameInput');
-      const button = document.getElementById('rsvpButton');
-      const message = document.getElementById('rsvpMessage');
+    document.getElementById("submit-btn").addEventListener("click", async () => {
+      const guestInput = document.getElementById("guest-name").value.trim().toLowerCase();
+      const messageEl = document.getElementById("message");
 
-      button.addEventListener('click', () => {
-        message.textContent = '';
-        message.classList.remove('error');
+      if (!guestInput) {
+        messageEl.textContent = "Please enter your name.";
+        messageEl.className = "error";
+        return;
+      }
 
-        const name = input.value.trim().toLowerCase();
-        if (!name) {
-          message.textContent = 'Please enter your name.';
-          message.classList.add('error');
-          return;
-        }
+      const guestData = await loadGuestList();
+      if (!guestData) return;
 
-        const partyKey = guestMap[name];
-        console.log('Entered name:', name, '→ partyKey:', partyKey);
+      const { nameToParty, partyRSVPLinks } = guestData;
+      const partyKey = nameToParty[guestInput];
 
-        if (partyKey && partyMap[partyKey]) {
-          console.log('Redirecting to:', partyMap[partyKey]);
-          window.location.href = partyMap[partyKey];
-        } else {
-          message.textContent = 'Sorry, we could not find your name. Please check your spelling or contact us.';
-          message.classList.add('error');
-        }
-      });
+      if (!partyKey) {
+        messageEl.textContent = "Name not found. Please check your spelling.";
+        messageEl.className = "error";
+        return;
+      }
 
-      input.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-          button.click();
-        }
-      });
+      const formUrl = partyRSVPLinks[partyKey];
+      if (!formUrl) {
+        messageEl.textContent = "RSVP form not found for your party.";
+        messageEl.className = "error";
+        return;
+      }
+
+      messageEl.textContent = "Redirecting you to your RSVP form...";
+      messageEl.className = "success";
+      setTimeout(() => {
+        window.location.href = formUrl;
+      }, 1000);
     });
   </script>
-</section>
+</body>
+</html>
+
