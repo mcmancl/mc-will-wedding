@@ -25,11 +25,12 @@
       font-size: 1rem;
       border: 2px solid var(--mulberry);
       border-radius: 8px;
-      outline: none;
-      transition: border-color 0.3s;
     }
 
-    .rsvp-container input:focus { border-color: var(--green); }
+    .rsvp-container input:focus {
+      border-color: var(--green);
+      outline: none;
+    }
 
     .rsvp-container button {
       padding: 0.8rem 1.2rem;
@@ -43,32 +44,61 @@
       transition: background-color 0.3s;
     }
 
-    .rsvp-container button:hover { background-color: var(--green); }
+    .rsvp-container button:hover {
+      background-color: var(--green);
+    }
 
-    #rsvpMessage { font-family: 'Montserrat', sans-serif; font-size: 0.95rem; color: var(--mulberry); }
-    #rsvpMessage.error { color: red; }
+    #rsvpMessage {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.95rem;
+      color: var(--mulberry);
+    }
+
+    #rsvpMessage.error {
+      color: red;
+    }
   </style>
 
   <script>
     async function loadGuestList() {
-      const response = await fetch('data/guestlist.csv');
-      const text = await response.text();
+      try {
+        console.log('Fetching guest list…');
+        const response = await fetch('data/guestlist.csv');
+        if (!response.ok) {
+          throw new Error('HTTP error ' + response.status);
+        }
+        const csvText = await response.text();
+        console.log('CSV loaded:', csvText.slice(0,200), '…');
+        const rows = csvText.trim().split('\n');
+        if (rows.length < 2) {
+          console.warn('CSV has no data rows.');
+        }
 
-      const rows = text.trim().split('\n');
-      const header = rows.shift(); // remove header row
+        const partyMap = {};
+        const guestMap = {};
 
-      const partyMap = {}; // party_key => form_url
-      const guestMap = {}; // guest_name_lower => party_key
+        for (let i = 1; i < rows.length; i++) {
+          const cols = rows[i].split(',').map(c => c.trim());
+          if (cols.length < 3) {
+            console.warn('Skipping invalid row (less than 3 cols):', rows[i]);
+            continue;
+          }
+          const [partyKey, guestName, formUrl] = cols;
+          guestMap[guestName.toLowerCase()] = partyKey;
+          partyMap[partyKey] = formUrl;
+        }
 
-      rows.forEach(row => {
-        const cols = row.split(',').map(c => c.trim());
-        if (cols.length < 3) return;
-        const [partyKey, guestName, formUrl] = cols;
-        partyMap[partyKey] = formUrl; // every party key points to its form
-        guestMap[guestName.toLowerCase()] = partyKey; // map guest to party
-      });
+        console.log('Loaded guestMap keys:', Object.keys(guestMap).slice(0,20));
+        console.log('Loaded partyMap keys:', Object.keys(partyMap));
 
-      return { guestMap, partyMap };
+        return { guestMap, partyMap };
+      } catch (err) {
+        console.error('Error loading guest list:', err);
+        const messageEl = document.getElementById('rsvpMessage');
+        messageEl.textContent = 'An error occurred while loading the guest list. Please try again later.';
+        messageEl.classList.add('error');
+        return { guestMap: {}, partyMap: {} };
+      }
     }
 
     document.addEventListener('DOMContentLoaded', async () => {
@@ -77,7 +107,10 @@
       const button = document.getElementById('rsvpButton');
       const message = document.getElementById('rsvpMessage');
 
-      function redirectToRSVP() {
+      button.addEventListener('click', () => {
+        message.textContent = '';
+        message.classList.remove('error');
+
         const name = input.value.trim().toLowerCase();
         if (!name) {
           message.textContent = 'Please enter your name.';
@@ -86,16 +119,22 @@
         }
 
         const partyKey = guestMap[name];
+        console.log('Entered name:', name, '→ partyKey:', partyKey);
+
         if (partyKey && partyMap[partyKey]) {
+          console.log('Redirecting to:', partyMap[partyKey]);
           window.location.href = partyMap[partyKey];
         } else {
           message.textContent = 'Sorry, we could not find your name. Please check your spelling or contact us.';
           message.classList.add('error');
         }
-      }
+      });
 
-      button.addEventListener('click', redirectToRSVP);
-      input.addEventListener('keypress', (e) => { if (e.key === 'Enter') redirectToRSVP(); });
+      input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          button.click();
+        }
+      });
     });
   </script>
 </section>
