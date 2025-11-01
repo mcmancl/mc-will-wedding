@@ -14,13 +14,12 @@
       --green: #52664c;
       --silver: #c0c0c0;
       --offwhite: #f9f8f7;
-      --highlight: #ffe6f0;
     }
 
     body {
       margin: 0;
       font-family: 'Montserrat', sans-serif;
-      background: linear-gradient(135deg, var(--offwhite) 0%, var(--highlight) 100%);
+      background-color: var(--offwhite);
       color: var(--mulberry);
       text-align: center;
       padding: 3rem 1rem;
@@ -29,58 +28,38 @@
     h1, h2 {
       font-family: 'Cormorant Garamond', serif;
       color: var(--mulberry);
-      margin: 0;
-    }
-
-    h1 {
-      font-size: 3rem;
-      margin-bottom: 0.2rem;
     }
 
     h2 {
       font-weight: 600;
       font-size: 2rem;
       margin-bottom: 1rem;
+      border-bottom: 1px solid var(--silver);
+      display: inline-block;
+      padding-bottom: 0.3rem;
     }
 
     .divider {
       width: 60px;
       height: 2px;
       background: linear-gradient(to right, var(--green), var(--mulberry));
-      margin: 1rem auto 2rem;
+      margin: 1.5rem auto;
       border-radius: 2px;
     }
 
-    #rsvp-card {
-      background: white;
-      max-width: 450px;
-      margin: 0 auto;
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    #rsvp-form {
+      margin-top: 2rem;
     }
 
-    #rsvp-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 12px 30px rgba(0,0,0,0.15);
-    }
-
-    input[type="text"], select {
-      width: 100%;
+    input[type="text"] {
+      width: 80%;
+      max-width: 400px;
       padding: 0.8rem 1rem;
       font-size: 1rem;
       border: 2px solid var(--green);
       border-radius: 8px;
       margin-bottom: 1rem;
       font-family: 'Montserrat', sans-serif;
-      transition: border-color 0.3s, box-shadow 0.3s;
-    }
-
-    input[type="text"]:focus, select:focus {
-      outline: none;
-      border-color: var(--mulberry);
-      box-shadow: 0 0 8px rgba(59,0,33,0.3);
     }
 
     button {
@@ -92,19 +71,16 @@
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      transition: background 0.3s, transform 0.2s;
+      transition: background 0.3s;
     }
 
     button:hover {
       background-color: var(--mulberry);
-      transform: translateY(-2px);
     }
 
     #message {
       margin-top: 1rem;
       font-weight: 500;
-      opacity: 0;
-      transition: opacity 0.4s ease;
     }
 
     #message.error {
@@ -120,7 +96,6 @@
       font-size: 0.9rem;
       color: var(--mulberry);
     }
-
   </style>
 </head>
 <body>
@@ -128,20 +103,11 @@
   <h1>RSVP</h1>
   <h2>Mary Claire & Will</h2>
   <div class="divider"></div>
+  <p>Enter your name to RSVP for your party:</p>
 
-  <div id="rsvp-card">
-    <p>Please enter your name to RSVP for your party:</p>
+  <div id="rsvp-form">
     <input type="text" id="guest-name" placeholder="Your Full Name" />
-    
-    <label for="party-size" style="display:block; margin-bottom:0.5rem; font-weight:500;">Number of Guests (including you):</label>
-    <select id="party-size">
-      <option value="1">1</option>
-      <option value="2">2</option>
-      <option value="3">3</option>
-      <option value="4">4</option>
-      <option value="5">5</option>
-    </select>
-
+    <br />
     <button id="submit-btn">RSVP</button>
     <div id="message"></div>
   </div>
@@ -153,6 +119,7 @@
   <script>
     async function loadGuestList() {
       try {
+        // Cache-busting with timestamp
         const response = await fetch(`data/guestlist.csv?v=${Date.now()}`);
         const csvText = await response.text();
         const lines = csvText.trim().split("\n");
@@ -173,21 +140,17 @@
       } catch (err) {
         console.error("Error loading guest list:", err);
         document.getElementById("message").textContent = "Sorry, we can't load the guest list right now.";
-        document.getElementById("message").className = "error";
-        document.getElementById("message").style.opacity = 1;
         return null;
       }
     }
 
     document.getElementById("submit-btn").addEventListener("click", async () => {
       const guestInput = document.getElementById("guest-name").value.trim().toLowerCase();
-      const partySize = document.getElementById("party-size").value;
       const messageEl = document.getElementById("message");
 
       if (!guestInput) {
         messageEl.textContent = "Please enter your name.";
         messageEl.className = "error";
-        messageEl.style.opacity = 1;
         return;
       }
 
@@ -200,7 +163,6 @@
       if (!partyKey) {
         messageEl.textContent = "Name not found. Please check your spelling.";
         messageEl.className = "error";
-        messageEl.style.opacity = 1;
         return;
       }
 
@@ -208,14 +170,11 @@
       if (!formUrl) {
         messageEl.textContent = "RSVP form not found for your party.";
         messageEl.className = "error";
-        messageEl.style.opacity = 1;
         return;
       }
 
-      messageEl.textContent = `Redirecting you to your RSVP form for ${partySize} guest(s)...`;
+      messageEl.textContent = "Redirecting you to your RSVP form...";
       messageEl.className = "success";
-      messageEl.style.opacity = 1;
-
       setTimeout(() => {
         window.location.href = formUrl;
       }, 1000);
