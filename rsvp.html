@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RSVP – Mary Claire & Will’s Wedding</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500&family=Cormorant+Garamond:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --mulberry: #3b0021;
+      --green: #52664c;
+      --silver: #c0c0c0;
+      --offwhite: #f9f8f7;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Montserrat', sans-serif;
+      background-color: var(--offwhite);
+      color: var(--mulberry);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      padding: 1rem;
+    }
+
+    .rsvp-container {
+      background-color: var(--green);
+      border-radius: 20px;
+      padding: 3rem 2.5rem;
+      max-width: 450px;
+      width: 100%;
+      box-sizing: border-box;
+      text-align: center;
+      box-shadow: 0 0 20px rgba(82, 102, 76, 0.6);
+    }
+
+    .rsvp-container p {
+      color: var(--offwhite);
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      line-height: 1.5;
+    }
+
+    .rsvp-container input[type="text"] {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      font-size: 1.1rem;
+      border-radius: 6px;
+      border: none;
+      margin: 1rem 0 0.25rem 0;
+      font-family: 'Montserrat', sans-serif;
+      box-sizing: border-box;
+      outline: none;
+    }
+
+    .rsvp-container input::placeholder {
+      font-style: italic;
+      color: #d4d4ca;
+    }
+
+    .example-text {
+      color: var(--offwhite);
+      font-size: 0.75rem;
+      font-style: italic;
+      margin-bottom: 2rem;
+      user-select: none;
+    }
+
+    button {
+      background-color: var(--mulberry);
+      color: var(--offwhite);
+      border: none;
+      padding: 0.8rem 2rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 1.1rem;
+      cursor: pointer;
+      border-radius: 10px;
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+
+    button:hover {
+      background-color: #270016;
+    }
+
+    .loading {
+      display: none;
+      margin-top: 1rem;
+      color: var(--offwhite);
+      font-style: italic;
+    }
+
+    .error {
+      display: none;
+      margin-top: 1rem;
+      color: #f08080;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="rsvp-container">
+    <p>Please enter the first and last name of one member of your party below.<br>
+      If you're responding for you and a guest (or your family), you'll be able to RSVP for your entire group on the next page.
+    </p>
+
+    <input type="text" id="guestName" placeholder="First and Last name" autocomplete="off" aria-label="Guest Name" />
+
+    <div class="example-text">Ex. Sarah Fortune (not The Fortune Family or Dr. &amp; Mr. Fortune)</div>
+
+    <button id="continueBtn">Continue</button>
+
+    <div class="loading" id="loadingText">Checking your name...</div>
+    <div class="error" id="errorText">Sorry, your name wasn’t found. Please check your spelling or contact us.</div>
+  </div>
+
+  <script>
+    const nameToParty = {
+      "john smith": "smith_party",
+      "jane smith": "smith_party",
+      "the parkers": "parker_party",
+      "tom parker": "parker_party",
+      "sarah parker": "parker_party",
+      "emily johnson": "johnson_party",
+      // Add ALL guest names here, all lowercase, one entry per guest
+    };
+
+    const partyRSVPLinks = {
+      "smith_party": "https://forms.office.com/Pages/ResponsePage.aspx?id=FORM_ID_SMITH",
+      "parker_party": "https://forms.office.com/Pages/ResponsePage.aspx?id=FORM_ID_PARKER",
+      "johnson_party": "https://forms.office.com/Pages/ResponsePage.aspx?id=FORM_ID_JOHNSON",
+      // Add party keys and their RSVP form URLs here
+    };
+
+    const guestInput = document.getElementById("guestName");
+    const continueBtn = document.getElementById("continueBtn");
+    const loadingText = document.getElementById("loadingText");
+    const errorText = document.getElementById("errorText");
+
+    function sanitizeName(name) {
+      return name.trim().toLowerCase();
+    }
+
+    continueBtn.addEventListener("click", () => {
+      errorText.style.display = "none";
+      const enteredName = sanitizeName(guestInput.value);
+
+      if (!enteredName) {
+        errorText.textContent = "Please enter a name.";
+        errorText.style.display = "block";
+        return;
+      }
+
+      loadingText.style.display = "block";
+      continueBtn.disabled = true;
+
+      // Simulate async lookup (for UX)
+      setTimeout(() => {
+        const partyKey = nameToParty[enteredName];
+        loadingText.style.display = "none";
+        continueBtn.disabled = false;
+
+        if (partyKey && partyRSVPLinks[partyKey]) {
+          window.location.href = partyRSVPLinks[partyKey];
+        } else {
+          errorText.textContent = "Sorry, your name wasn’t found. Please check your spelling or contact us.";
+          errorText.style.display = "block";
+        }
+      }, 800);
+    });
+
+    // Optional: submit on Enter key
+    guestInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        continueBtn.click();
+      }
+    });
+  </script>
+</body>
+</html>
